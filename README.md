@@ -175,8 +175,8 @@ _MediaSocket outputSocket = _MediaSocket()
                           HardwareEncoder::Auto)));
 
 // Or configure globally
-Library::config()->hardware()->setIntelMedia(true);
-Library::config()->hardware()->setNvenc(true);
+_Library::config()->hardware()->setIntelMedia(true);
+_Library::config()->hardware()->setNvenc(true);
 ```
 
 ## Error Handling
