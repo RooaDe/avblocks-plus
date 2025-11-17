@@ -17,17 +17,17 @@ bool decode(const Options& opt)
         deleteFile(opt.outputFile.c_str());
 
         // Create input socket from file.
-        _MediaSocketW inputSocket = _MediaSocketW()
+        TMediaSocketW inputSocket = TMediaSocketW()
                 .file(opt.inputFile);
         
         // Create output socket with WAV format and LPCM audio
-        _MediaSocketW outputSocket = _MediaSocketW()
+        TMediaSocketW outputSocket = TMediaSocketW()
                 .file(opt.outputFile)
                 .streamType(StreamType::WAVE)
-                .addPin(_MediaPin().audioStreamType(StreamType::LPCM));
+                .addPin(TMediaPin().audioStreamType(StreamType::LPCM));
         
         // Create and run transcoder
-        _TranscoderW()
+        TTranscoderW()
             .allowDemoMode(true)
             .addInput(inputSocket)
             .addOutput(outputSocket)
@@ -37,7 +37,7 @@ bool decode(const Options& opt)
         
         return true;
         
-    } catch (const _AVBlocksException& ex) {
+    } catch (const TAVBlocksException& ex) {
         std::cerr << "AVBlocks error: " << ex.what() << std::endl;
         return false;
     } catch (const std::exception& ex) {
@@ -56,6 +56,6 @@ int wmain(int argc, wchar_t* argv[])
         case Parsed: break;
     }
 
-    _Library library;
+    TLibrary library;
     return decode(opt) ? 0 : 1;
 }

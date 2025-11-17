@@ -19,83 +19,83 @@
 
 namespace primo::avblocks::modern {
 
-class _AVBlocksException : public std::runtime_error {
+class TAVBlocksException : public std::runtime_error {
 public:
-    explicit _AVBlocksException(const std::string& message) 
+    explicit TAVBlocksException(const std::string& message) 
         : std::runtime_error(message) {}
 };
 
-class _Library {
+class TLibrary {
 public:
-    _Library() {
+    TLibrary() {
         primo::avblocks::Library::initialize();
     }
     
-    ~_Library() {
+    ~TLibrary() {
         primo::avblocks::Library::shutdown();
     }
     
-    _Library(const _Library&) = delete;
-    _Library& operator=(const _Library&) = delete;
-    _Library(_Library&&) = delete;
-    _Library& operator=(_Library&&) = delete;
+    TLibrary(const TLibrary&) = delete;
+    TLibrary& operator=(const TLibrary&) = delete;
+    TLibrary(TLibrary&&) = delete;
+    TLibrary& operator=(TLibrary&&) = delete;
 };
 
-class _MediaSample {
+class TMediaSample {
     primo::ref<primo::codecs::MediaSample> sample_;
     
 public:
-    _MediaSample() 
+    TMediaSample() 
         : sample_(primo::avblocks::Library::createMediaSample()) {}
     
-    explicit _MediaSample(primo::ref<primo::codecs::MediaSample> sample)
+    explicit TMediaSample(primo::ref<primo::codecs::MediaSample> sample)
         : sample_(std::move(sample)) {}
     
     // Delete copy operations
-    _MediaSample(const _MediaSample&) = delete;
-    _MediaSample& operator=(const _MediaSample&) = delete;
+    TMediaSample(const TMediaSample&) = delete;
+    TMediaSample& operator=(const TMediaSample&) = delete;
     
     // Enable move operations
-    _MediaSample(_MediaSample&&) = default;
-    _MediaSample& operator=(_MediaSample&&) = default;
+    TMediaSample(TMediaSample&&) = default;
+    TMediaSample& operator=(TMediaSample&&) = default;
     
     primo::codecs::MediaSample* get() const { return sample_.get(); }
 };
 
-class _AudioStreamInfo {
+class TAudioStreamInfo {
     primo::ref<primo::codecs::AudioStreamInfo> info_;
     
 public:
-    _AudioStreamInfo() 
+    TAudioStreamInfo() 
         : info_(primo::avblocks::Library::createAudioStreamInfo()) {}
     
-    explicit _AudioStreamInfo(primo::ref<primo::codecs::AudioStreamInfo> info)
+    explicit TAudioStreamInfo(primo::ref<primo::codecs::AudioStreamInfo> info)
         : info_(std::move(info)) {}
     
     // Delete copy operations
-    _AudioStreamInfo(const _AudioStreamInfo&) = delete;
-    _AudioStreamInfo& operator=(const _AudioStreamInfo&) = delete;
+    TAudioStreamInfo(const TAudioStreamInfo&) = delete;
+    TAudioStreamInfo& operator=(const TAudioStreamInfo&) = delete;
     
     // Enable move operations
-    _AudioStreamInfo(_AudioStreamInfo&&) = default;
-    _AudioStreamInfo& operator=(_AudioStreamInfo&&) = default;
+    TAudioStreamInfo(TAudioStreamInfo&&) = default;
+    TAudioStreamInfo& operator=(TAudioStreamInfo&&) = default;
     
-    _AudioStreamInfo& streamType(primo::codecs::StreamType::Enum type) {
+    TAudioStreamInfo& streamType(primo::codecs::StreamType::Enum type) {
         info_->setStreamType(type);
         return *this;
     }
     
-    _AudioStreamInfo& channels(int32_t channels) {
+    TAudioStreamInfo& channels(int32_t channels) {
         info_->setChannels(channels);
         return *this;
     }
     
-    _AudioStreamInfo& sampleRate(int32_t sampleRate) {
+    TAudioStreamInfo& sampleRate(int32_t sampleRate) {
         info_->setSampleRate(sampleRate);
         return *this;
     }
     
-    _AudioStreamInfo& bitsPerSample(int32_t bits) {
+    TAudioStreamInfo& bitsPerSample(int32_t bits) {
         info_->setBitsPerSample(bits);
         return *this;
     }
@@ -103,85 +103,85 @@ public:
     primo::codecs::AudioStreamInfo* get() const { return info_.get(); }
 };
 
-class _MediaPin {
+class TMediaPin {
     primo::ref<primo::avblocks::MediaPin> pin_;
     
 public:
-    _MediaPin() 
+    TMediaPin() 
         : pin_(primo::avblocks::Library::createMediaPin()) {}
     
-    explicit _MediaPin(primo::ref<primo::avblocks::MediaPin> pin)
+    explicit TMediaPin(primo::ref<primo::avblocks::MediaPin> pin)
         : pin_(std::move(pin)) {}
     
     // Delete copy operations
-    _MediaPin(const _MediaPin&) = delete;
-    _MediaPin& operator=(const _MediaPin&) = delete;
+    TMediaPin(const TMediaPin&) = delete;
+    TMediaPin& operator=(const TMediaPin&) = delete;
     
     // Enable move operations
-    _MediaPin(_MediaPin&&) = default;
-    _MediaPin& operator=(_MediaPin&&) = default;
+    TMediaPin(TMediaPin&&) = default;
+    TMediaPin& operator=(TMediaPin&&) = default;
     
-    _MediaPin&& streamInfo(const _AudioStreamInfo& info) && {
+    TMediaPin&& streamInfo(const TAudioStreamInfo& info) && {
         pin_->setStreamInfo(info.get());
         return std::move(*this);
     }
     
-    _MediaPin& streamInfo(const _AudioStreamInfo& info) & {
+    TMediaPin& streamInfo(const TAudioStreamInfo& info) & {
         pin_->setStreamInfo(info.get());
         return *this;
     }
     
     // Builder methods for audio pins
-    _MediaPin&& audioStreamType(primo::codecs::StreamType::Enum streamType) && {
+    TMediaPin&& audioStreamType(primo::codecs::StreamType::Enum streamType) && {
         primo::ref<primo::codecs::AudioStreamInfo> info(primo::avblocks::Library::createAudioStreamInfo());
         info->setStreamType(streamType);
         pin_->setStreamInfo(info.get());
         return std::move(*this);
     }
     
-    _MediaPin& audioStreamType(primo::codecs::StreamType::Enum streamType) & {
+    TMediaPin& audioStreamType(primo::codecs::StreamType::Enum streamType) & {
         primo::ref<primo::codecs::AudioStreamInfo> info(primo::avblocks::Library::createAudioStreamInfo());
         info->setStreamType(streamType);
         pin_->setStreamInfo(info.get());
         return *this;
     }
     
-    _MediaPin&& channels(int32_t channels) && {
+    TMediaPin&& channels(int32_t channels) && {
         if (auto* info = dynamic_cast<primo::codecs::AudioStreamInfo*>(pin_->streamInfo())) {
             info->setChannels(channels);
         }
         return std::move(*this);
     }
     
-    _MediaPin& channels(int32_t channels) & {
+    TMediaPin& channels(int32_t channels) & {
         if (auto* info = dynamic_cast<primo::codecs::AudioStreamInfo*>(pin_->streamInfo())) {
             info->setChannels(channels);
         }
         return *this;
     }
     
-    _MediaPin&& sampleRate(int32_t sampleRate) && {
+    TMediaPin&& sampleRate(int32_t sampleRate) && {
         if (auto* info = dynamic_cast<primo::codecs::AudioStreamInfo*>(pin_->streamInfo())) {
             info->setSampleRate(sampleRate);
         }
         return std::move(*this);
     }
     
-    _MediaPin& sampleRate(int32_t sampleRate) & {
+    TMediaPin& sampleRate(int32_t sampleRate) & {
         if (auto* info = dynamic_cast<primo::codecs::AudioStreamInfo*>(pin_->streamInfo())) {
             info->setSampleRate(sampleRate);
         }
         return *this;
     }
 
-    _MediaPin&& bitsPerSample(int32_t bits) && {
+    TMediaPin&& bitsPerSample(int32_t bits) && {
         if (auto* info = dynamic_cast<primo::codecs::AudioStreamInfo*>(pin_->streamInfo())) {
             info->setBitsPerSample(bits);
         }
         return std::move(*this);
     }
     
-    _MediaPin& bitsPerSample(int32_t bits) & {
+    TMediaPin& bitsPerSample(int32_t bits) & {
         if (auto* info = dynamic_cast<primo::codecs::AudioStreamInfo*>(pin_->streamInfo())) {
             info->setBitsPerSample(bits);
         }
@@ -212,53 +212,53 @@ struct string_traits<wchar_t> {
 };
 
 template<typename CharT = char>
-class _MediaSocketT {
+class TMediaSocketT {
     primo::ref<primo::avblocks::MediaSocket> socket_;
     
 public:
     using string_type = typename string_traits<CharT>::string_type;
     
-    _MediaSocketT() 
+    TMediaSocketT() 
         : socket_(primo::avblocks::Library::createMediaSocket()) {}
     
-    explicit _MediaSocketT(primo::ref<primo::avblocks::MediaSocket> socket)
+    explicit TMediaSocketT(primo::ref<primo::avblocks::MediaSocket> socket)
         : socket_(std::move(socket)) {}
     
     // Delete copy operations
-    _MediaSocketT(const _MediaSocketT&) = delete;
-    _MediaSocketT& operator=(const _MediaSocketT&) = delete;
+    TMediaSocketT(const TMediaSocketT&) = delete;
+    TMediaSocketT& operator=(const TMediaSocketT&) = delete;
     
     // Enable move operations
-    _MediaSocketT(_MediaSocketT&&) = default;
-    _MediaSocketT& operator=(_MediaSocketT&&) = default;
+    TMediaSocketT(TMediaSocketT&&) = default;
+    TMediaSocketT& operator=(TMediaSocketT&&) = default;
     
     // Rvalue overloads for method chaining
-    _MediaSocketT&& file(const string_type& path) && {
+    TMediaSocketT&& file(const string_type& path) && {
         socket_->setFile(string_traits<CharT>::to_ustring(path));
         return std::move(*this);
     }
     
-    _MediaSocketT& file(const string_type& path) & {
+    TMediaSocketT& file(const string_type& path) & {
         socket_->setFile(string_traits<CharT>::to_ustring(path));
         return *this;
     }
     
-    _MediaSocketT&& streamType(primo::codecs::StreamType::Enum type) && {
+    TMediaSocketT&& streamType(primo::codecs::StreamType::Enum type) && {
         socket_->setStreamType(type);
         return std::move(*this);
     }
     
-    _MediaSocketT& streamType(primo::codecs::StreamType::Enum type) & {
+    TMediaSocketT& streamType(primo::codecs::StreamType::Enum type) & {
         socket_->setStreamType(type);
         return *this;
     }
     
-    _MediaSocketT&& addPin(_MediaPin&& pin) && {
+    TMediaSocketT&& addPin(TMediaPin&& pin) && {
         socket_->pins()->add(pin.get());
         return std::move(*this);
     }
     
-    _MediaSocketT& addPin(_MediaPin&& pin) & {
+    TMediaSocketT& addPin(TMediaPin&& pin) & {
         socket_->pins()->add(pin.get());
         return *this;
     }
@@ -267,68 +267,68 @@ public:
 };
 
 // Type aliases for convenience
-using _MediaSocket = _MediaSocketT<char>;
-using _MediaSocketW = _MediaSocketT<wchar_t>;
+using TMediaSocket = TMediaSocketT<char>;
+using TMediaSocketW = TMediaSocketT<wchar_t>;
 
 template<typename CharT = char>
-class _TranscoderT {
+class TTranscoderT {
     primo::ref<primo::avblocks::Transcoder> transcoder_;
     
 public:
-    _TranscoderT() 
+    TTranscoderT() 
         : transcoder_(primo::avblocks::Library::createTranscoder()) {}
     
     // Delete copy operations
-    _TranscoderT(const _TranscoderT&) = delete;
-    _TranscoderT& operator=(const _TranscoderT&) = delete;
+    TTranscoderT(const TTranscoderT&) = delete;
+    TTranscoderT& operator=(const TTranscoderT&) = delete;
     
     // Enable move operations
-    _TranscoderT(_TranscoderT&&) = default;
-    _TranscoderT& operator=(_TranscoderT&&) = default;
+    TTranscoderT(TTranscoderT&&) = default;
+    TTranscoderT& operator=(TTranscoderT&&) = default;
     
-    _TranscoderT& allowDemoMode(bool allow = true) {
+    TTranscoderT& allowDemoMode(bool allow = true) {
         transcoder_->setAllowDemoMode(allow ? TRUE : FALSE);
         return *this;
     }
     
-    _TranscoderT& addInput(const _MediaSocketT<CharT>& socket) {
+    TTranscoderT& addInput(const TMediaSocketT<CharT>& socket) {
         transcoder_->inputs()->add(socket.get());
         return *this;
     }
     
-    _TranscoderT& addOutput(const _MediaSocketT<CharT>& socket) {
+    TTranscoderT& addOutput(const TMediaSocketT<CharT>& socket) {
         transcoder_->outputs()->add(socket.get());
         return *this;
     }
     
-    _TranscoderT& open() {
+    TTranscoderT& open() {
         if (!transcoder_->open()) {
             auto* error = transcoder_->error();
             std::string msg = "Failed to open transcoder";
             if (error && error->message()) {
                 msg += ": " + std::string(primo::ustring(error->message()));
             }
-            throw _AVBlocksException(msg);
+            throw TAVBlocksException(msg);
         }
         return *this;
     }
     
-    bool pull(int32_t& outputIndex, _MediaSample& sample) {
+    bool pull(int32_t& outputIndex, TMediaSample& sample) {
         return transcoder_->pull(outputIndex, sample.get()) == TRUE;
     }
 
-    bool push(int32_t inputIndex, _MediaSample& sample) {
+    bool push(int32_t inputIndex, TMediaSample& sample) {
         return transcoder_->push(inputIndex, sample.get()) == TRUE;
     }
     
-    _TranscoderT& run() {
+    TTranscoderT& run() {
         if (!transcoder_->run()) {
             auto* error = transcoder_->error();
             std::string msg = "Failed to run transcoder";
             if (error && error->message()) {
                 msg += ": " + std::string(primo::ustring(error->message()));
             }
-            throw _AVBlocksException(msg);
+            throw TAVBlocksException(msg);
         }
         return *this;
     }
@@ -345,7 +345,7 @@ public:
 };
 
 // Type aliases for convenience
-using _Transcoder = _TranscoderT<char>;
-using _TranscoderW = _TranscoderT<wchar_t>;
+using TTranscoder = TTranscoderT<char>;
+using TTranscoderW = TTranscoderT<wchar_t>;
 
 } // namespace primo::avblocks::modern
