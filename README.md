@@ -55,8 +55,7 @@ Decode AAC to PCM audio:
 ```cpp
 // Create input socket from AAC file
 MediaSocket inputSocket = MediaSocket()
-    .file("audio.aac")
-    .streamType(StreamType::AAC);
+    .file("audio.aac");
 
 // Create output socket for WAV file with LPCM audio
 MediaSocket outputSocket = MediaSocket()
@@ -212,33 +211,65 @@ try {
 For advanced scenarios, you can push/pull media samples:
 
 ```cpp
-// Push mode: feed samples manually
-Transcoder transcoder = Transcoder()
-    .addInput(MediaSocket()
-        .streamType(StreamType::H264)
-        .addPin(MediaPin().videoStreamType(StreamType::H264)))
-    .addOutput(MediaSocket().file("output.yuv")
+// Create decoder transcoder - input from file, output PCM without file
+Transcoder decoder = Transcoder()
+    .allowDemoMode(true)
+    .addInput(MediaSocket().file("input.aac"))
+    .addOutput(MediaSocket()
+        .streamType(StreamType::LPCM)
         .addPin(MediaPin()
-            .videoStreamType(StreamType::UncompressedVideo)))
+            .audioStreamType(StreamType::LPCM)
+            .channels(2)
+            .sampleRate(48000)
+            .bitsPerSample(16)))
     .open();
 
-// Push encoded samples
-MediaSample sample = MediaSample()
-    .buffer(encodedData)
-    .startTime(timestamp);
-    
-transcoder.push(0, sample);
+// Create WAV writer transcoder - input PCM without file, output to file
+Transcoder wavWriter = Transcoder()
+    .allowDemoMode(true)
+    .addInput(MediaSocket()
+        .streamType(StreamType::LPCM)
+        .addPin(MediaPin()
+            .audioStreamType(StreamType::LPCM)
+            .channels(2)
+            .sampleRate(48000)
+            .bitsPerSample(16)))
+    .addOutput(MediaSocket()
+        .file("output.wav")
+        .streamType(StreamType::WAVE)
+        .addPin(MediaPin()
+            .audioStreamType(StreamType::LPCM)
+            .channels(2)
+            .sampleRate(48000)
+            .bitsPerSample(16)))
+    .open();
 
-// Pull decoded samples
-int outputIndex;
-MediaSample outputSample;
-while (transcoder.pull(outputIndex, outputSample)) {
-    // Process decoded sample
-    processDecodedFrame(outputSample.buffer());
+// Pull-push decoding loop
+int32_t outputIndex = 0;
+MediaSample pcmSample;
+
+bool decoderEos = false;
+while (!decoderEos) {
+    // Pull PCM sample from decoder
+    if (decoder.pull(outputIndex, pcmSample)) {
+        // Push PCM sample to WAV writer
+        wavWriter.push(0, pcmSample);
+        continue;
+    }
+
+    // Check for end of stream
+    const auto* error = decoder.error();
+    if (error->facility() == primo::error::ErrorFacility::Codec &&
+        error->code() == CodecError::EOS) {
+        // Push null sample to signal EOS to WAV writer
+        MediaSample nullSample;
+        wavWriter.push(0, nullSample);
+        decoderEos = true;
+    }
 }
 
-transcoder.flush();
-transcoder.close();
+decoder.close();
+wavWriter.close();
 ```
 
 ## API Reference
