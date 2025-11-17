@@ -21,13 +21,13 @@ Make sure you have done the [setup for Windows](./setup-windows.md)
 #### Build
 
 ```powershell
-invoke build --type release
+.\scripts\build.ps1 --type release
 ```
 
 #### Clean
 
 ```powershell
-invoke clean --type release
+.\scripts\clean.ps1 --type release
 ```
 
 #### Edit
