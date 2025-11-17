@@ -4,9 +4,9 @@
 #include "options.h"
 
 using namespace primo::avblocks::modern;
+using namespace primo::codecs;
 using namespace std;
 
-namespace pc = primo::codecs;
 
 bool decode(Options &opt)
 {
@@ -23,10 +23,10 @@ bool decode(Options &opt)
             )
             .addOutput(
                 MediaSocket_()
-                    .streamType(pc::StreamType::LPCM)
+                    .streamType(StreamType::LPCM)
                     .addPin(
                         MediaPin_()
-                            .audioStreamType(pc::StreamType::LPCM)
+                            .audioStreamType(StreamType::LPCM)
                             .channels(2)
                             .sampleRate(48000)
                             .bitsPerSample(16)
@@ -39,10 +39,10 @@ bool decode(Options &opt)
         wavWriter.allowDemoMode(true)
             .addInput(
                 MediaSocket_()
-                    .streamType(pc::StreamType::LPCM)
+                    .streamType(StreamType::LPCM)
                     .addPin(
                         MediaPin_()
-                            .audioStreamType(pc::StreamType::LPCM)
+                            .audioStreamType(StreamType::LPCM)
                             .channels(2)
                             .sampleRate(48000)
                             .bitsPerSample(16)
@@ -51,10 +51,10 @@ bool decode(Options &opt)
             .addOutput(
                 MediaSocket_()
                     .file(opt.outputFile)
-                    .streamType(pc::StreamType::WAVE)
+                    .streamType(StreamType::WAVE)
                     .addPin(
                         MediaPin_()
-                            .audioStreamType(pc::StreamType::LPCM)
+                            .audioStreamType(StreamType::LPCM)
                             .channels(2)
                             .sampleRate(48000)
                             .bitsPerSample(16)
@@ -81,7 +81,7 @@ bool decode(Options &opt)
             // No more PCM data from decoder
             const auto* error = decoder.error();
             if (error->facility() == primo::error::ErrorFacility::Codec &&
-                error->code() == pc::CodecError::EOS) {
+                error->code() == CodecError::EOS) {
                 // Push null sample to signal EOS to WAV writer
                 MediaSample_ nullSample;
                 wavWriter.push(0, nullSample);
