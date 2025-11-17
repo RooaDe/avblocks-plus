@@ -3,8 +3,8 @@
 #include "util.h"
 #include "options.h"
 
-using namespace primo::avblocks::modern;
 using namespace primo::codecs;
+using namespace primo::avblocks::modern;
 using namespace std;
 
 
