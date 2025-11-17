@@ -41,6 +41,27 @@ public:
     Library& operator=(Library&&) = delete;
 };
 
+class MediaSample {
+    primo::ref<primo::codecs::MediaSample> sample_;
+    
+public:
+    MediaSample() 
+        : sample_(primo::avblocks::Library::createMediaSample()) {}
+    
+    explicit MediaSample(primo::ref<primo::codecs::MediaSample> sample)
+        : sample_(std::move(sample)) {}
+    
+    // Delete copy operations
+    MediaSample(const MediaSample&) = delete;
+    MediaSample& operator=(const MediaSample&) = delete;
+    
+    // Enable move operations
+    MediaSample(MediaSample&&) = default;
+    MediaSample& operator=(MediaSample&&) = default;
+    
+    primo::codecs::MediaSample* get() const { return sample_.get(); }
+};
+
 class AudioStreamInfo {
     primo::ref<primo::codecs::AudioStreamInfo> info_;
     
@@ -149,6 +170,20 @@ public:
     MediaPin& sampleRate(int32_t sampleRate) & {
         if (auto* info = dynamic_cast<primo::codecs::AudioStreamInfo*>(pin_->streamInfo())) {
             info->setSampleRate(sampleRate);
+        }
+        return *this;
+    }
+
+    MediaPin&& bitsPerSample(int32_t bits) && {
+        if (auto* info = dynamic_cast<primo::codecs::AudioStreamInfo*>(pin_->streamInfo())) {
+            info->setBitsPerSample(bits);
+        }
+        return std::move(*this);
+    }
+    
+    MediaPin& bitsPerSample(int32_t bits) & {
+        if (auto* info = dynamic_cast<primo::codecs::AudioStreamInfo*>(pin_->streamInfo())) {
+            info->setBitsPerSample(bits);
         }
         return *this;
     }
@@ -278,6 +313,14 @@ public:
         return *this;
     }
     
+    bool pull(int32_t& outputIndex, MediaSample& sample) {
+        return transcoder_->pull(outputIndex, sample.get()) == TRUE;
+    }
+
+    bool push(int32_t inputIndex, MediaSample& sample) {
+        return transcoder_->push(inputIndex, sample.get()) == TRUE;
+    }
+    
     TranscoderT& run() {
         if (!transcoder_->run()) {
             auto* error = transcoder_->error();
@@ -292,6 +335,10 @@ public:
     
     void close() {
         transcoder_->close();
+    }
+
+    const primo::error::ErrorInfo* error() const {
+        return transcoder_->error();
     }
     
     primo::avblocks::Transcoder* get() const { return transcoder_.get(); }

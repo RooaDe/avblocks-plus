@@ -5,26 +5,25 @@
 .venv/
 
 # build
-build/
-bin/
+/build
+/bin
 /-m64
 /null.d
 
 # AVBlocks SDK
-sdk/
+/sdk
 
 # assets
-assets/
-package/
+/assets
+/package
 
 # output
-output/
+/output
 
 # generators
-xcode/
+/xcode
 
-vs2017/
-vs2019/
+/vs2017
+/vs2019
 
-
-
+/primo-avblocks-cpp
