@@ -15,17 +15,17 @@ bool decode(Options &opt)
 
     try {
         // Create decoder transcoder - input from file, output PCM without file
-        Transcoder decoder;
+        Transcoder_ decoder;
         decoder.allowDemoMode(true)
             .addInput(
-                MediaSocket()
+                MediaSocket_()
                     .file(opt.inputFile)
             )
             .addOutput(
-                MediaSocket()
+                MediaSocket_()
                     .streamType(pc::StreamType::LPCM)
                     .addPin(
-                        MediaPin()
+                        MediaPin_()
                             .audioStreamType(pc::StreamType::LPCM)
                             .channels(2)
                             .sampleRate(48000)
@@ -35,13 +35,13 @@ bool decode(Options &opt)
             .open();
 
         // Create WAV writer transcoder - input PCM without file, output to file
-        Transcoder wavWriter;
+        Transcoder_ wavWriter;
         wavWriter.allowDemoMode(true)
             .addInput(
-                MediaSocket()
+                MediaSocket_()
                     .streamType(pc::StreamType::LPCM)
                     .addPin(
-                        MediaPin()
+                        MediaPin_()
                             .audioStreamType(pc::StreamType::LPCM)
                             .channels(2)
                             .sampleRate(48000)
@@ -49,11 +49,11 @@ bool decode(Options &opt)
                     )
             )
             .addOutput(
-                MediaSocket()
+                MediaSocket_()
                     .file(opt.outputFile)
                     .streamType(pc::StreamType::WAVE)
                     .addPin(
-                        MediaPin()
+                        MediaPin_()
                             .audioStreamType(pc::StreamType::LPCM)
                             .channels(2)
                             .sampleRate(48000)
@@ -64,7 +64,7 @@ bool decode(Options &opt)
 
         // Pull-push decoding loop
         int32_t decoderOutputIndex = 0;
-        MediaSample pcmSample;
+        MediaSample_ pcmSample;
 
         bool decoderEos = false;
         while (!decoderEos) {
@@ -83,7 +83,7 @@ bool decode(Options &opt)
             if (error->facility() == primo::error::ErrorFacility::Codec &&
                 error->code() == pc::CodecError::EOS) {
                 // Push null sample to signal EOS to WAV writer
-                MediaSample nullSample;
+                MediaSample_ nullSample;
                 wavWriter.push(0, nullSample);
                 decoderEos = true;
                 continue;

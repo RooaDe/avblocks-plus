@@ -15,17 +15,17 @@ bool decode(const Options& opt)
         deleteFile(opt.outputFile.c_str());
         
         // Create input socket from file.
-        MediaSocket inputSocket = MediaSocket()
+        MediaSocket_ inputSocket = MediaSocket_()
                 .file(opt.inputFile);
         
         // Create output socket with WAV format and LPCM audio
-        MediaSocket outputSocket = MediaSocket()
+        MediaSocket_ outputSocket = MediaSocket_()
                 .file(opt.outputFile)
                 .streamType(StreamType::WAVE)
-                .addPin(MediaPin().audioStreamType(StreamType::LPCM));
+                .addPin(MediaPin_().audioStreamType(StreamType::LPCM));
         
         // Create and run transcoder
-        Transcoder()
+        Transcoder_()
             .allowDemoMode(true)
             .addInput(inputSocket)
             .addOutput(outputSocket)

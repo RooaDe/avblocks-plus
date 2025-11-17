@@ -30,12 +30,12 @@ int main() {
         Library library;
         
         // Simple file conversion
-        Transcoder()
+        Transcoder_()
             .allowDemoMode(true)
-            .addInput(MediaSocket().file("input.mp4"))
-            .addOutput(MediaSocket().file("output.wav")
+            .addInput(MediaSocket_().file("input.mp4"))
+            .addOutput(MediaSocket_().file("output.wav")
                 .streamType(StreamType::WAVE)
-                .addPin(MediaPin().audioStreamType(StreamType::LPCM)))
+                .addPin(MediaPin_().audioStreamType(StreamType::LPCM)))
             .open()
             .run()
             .close();
@@ -54,17 +54,17 @@ Decode AAC to PCM audio:
 
 ```cpp
 // Create input socket from AAC file
-MediaSocket inputSocket = MediaSocket()
+MediaSocket_ inputSocket = MediaSocket_()
     .file("audio.aac");
 
 // Create output socket for WAV file with LPCM audio
-MediaSocket outputSocket = MediaSocket()
+MediaSocket_ outputSocket = MediaSocket_()
     .file("output.wav")
     .streamType(StreamType::WAVE)
-    .addPin(MediaPin().audioStreamType(StreamType::LPCM));
+    .addPin(MediaPin_().audioStreamType(StreamType::LPCM));
 
 // Transcode
-Transcoder()
+Transcoder_()
     .allowDemoMode(true)
     .addInput(inputSocket)
     .addOutput(outputSocket)
@@ -79,9 +79,9 @@ Encode raw video to H.264:
 
 ```cpp
 // Input: raw YUV video
-MediaSocket inputSocket = MediaSocket()
+MediaSocket_ inputSocket = MediaSocket_()
     .file("raw_video.yuv")
-    .addPin(MediaPin()
+    .addPin(MediaPin_()
         .videoStreamType(StreamType::UncompressedVideo)
         .videoWidth(1920)
         .videoHeight(1080)
@@ -89,17 +89,17 @@ MediaSocket inputSocket = MediaSocket()
         .videoColorFormat(ColorFormat::YUV420));
 
 // Output: H.264 in MP4 container
-MediaSocket outputSocket = MediaSocket()
+MediaSocket_ outputSocket = MediaSocket_()
     .file("output.mp4")
     .streamType(StreamType::MP4)
-    .addPin(MediaPin()
+    .addPin(MediaPin_()
         .videoStreamType(StreamType::H264)
         .videoWidth(1920)
         .videoHeight(1080)
         .videoFrameRate(30.0)
         .videoBitrate(5000000));
 
-Transcoder()
+Transcoder_()
     .allowDemoMode(true)
     .addInput(inputSocket)
     .addOutput(outputSocket)
@@ -114,13 +114,13 @@ AVBlocks provides presets for common output formats:
 
 ```cpp
 // Create output from preset
-MediaSocket outputSocket = MediaSocket()
+MediaSocket_ outputSocket = MediaSocket_()
     .file("output.mp4")
     .preset("ipad.mp4.h264.720p");
 
-Transcoder()
+Transcoder_()
     .allowDemoMode(true)
-    .addInput(MediaSocket().file("input.avi"))
+    .addInput(MediaSocket_().file("input.avi"))
     .addOutput(outputSocket)
     .open()
     .run()
@@ -139,8 +139,8 @@ Available presets include:
 Get information about a media file:
 
 ```cpp
-MediaInfo info = MediaInfo()
-    .addInput(MediaSocket().file("video.mp4"))
+MediaInfo_ info = MediaInfo_()
+    .addInput(MediaSocket_().file("video.mp4"))
     .open();
 
 // Access output sockets with stream information
@@ -166,10 +166,10 @@ for (int i = 0; i < info.outputs().count(); ++i) {
 Enable hardware encoding:
 
 ```cpp
-MediaSocket outputSocket = MediaSocket()
+MediaSocket_ outputSocket = MediaSocket_()
     .file("output.mp4")
     .streamType(StreamType::MP4)
-    .addPin(MediaPin()
+    .addPin(MediaPin_()
         .videoStreamType(StreamType::H264)
         .addParam(IntParam(Param::HardwareEncoder, 
                           HardwareEncoder::Auto)));
@@ -185,9 +185,9 @@ The modern API uses exceptions for error handling:
 
 ```cpp
 try {
-    Transcoder transcoder = Transcoder()
-        .addInput(MediaSocket().file("input.mp4"))
-        .addOutput(MediaSocket().file("output.wav"))
+    Transcoder_ transcoder = Transcoder_()
+        .addInput(MediaSocket_().file("input.mp4"))
+        .addOutput(MediaSocket_().file("output.wav"))
         .open();
         
     transcoder.run();
@@ -212,12 +212,12 @@ For advanced scenarios, you can push/pull media samples:
 
 ```cpp
 // Create decoder transcoder - input from file, output PCM without file
-Transcoder decoder = Transcoder()
+Transcoder_ decoder = Transcoder_()
     .allowDemoMode(true)
-    .addInput(MediaSocket().file("input.aac"))
-    .addOutput(MediaSocket()
+    .addInput(MediaSocket_().file("input.aac"))
+    .addOutput(MediaSocket_()
         .streamType(StreamType::LPCM)
-        .addPin(MediaPin()
+        .addPin(MediaPin_()
             .audioStreamType(StreamType::LPCM)
             .channels(2)
             .sampleRate(48000)
@@ -225,19 +225,19 @@ Transcoder decoder = Transcoder()
     .open();
 
 // Create WAV writer transcoder - input PCM without file, output to file
-Transcoder wavWriter = Transcoder()
+Transcoder_ wavWriter = Transcoder_()
     .allowDemoMode(true)
-    .addInput(MediaSocket()
+    .addInput(MediaSocket_()
         .streamType(StreamType::LPCM)
-        .addPin(MediaPin()
+        .addPin(MediaPin_()
             .audioStreamType(StreamType::LPCM)
             .channels(2)
             .sampleRate(48000)
             .bitsPerSample(16)))
-    .addOutput(MediaSocket()
+    .addOutput(MediaSocket_()
         .file("output.wav")
         .streamType(StreamType::WAVE)
-        .addPin(MediaPin()
+        .addPin(MediaPin_()
             .audioStreamType(StreamType::LPCM)
             .channels(2)
             .sampleRate(48000)
@@ -246,7 +246,7 @@ Transcoder wavWriter = Transcoder()
 
 // Pull-push decoding loop
 int32_t outputIndex = 0;
-MediaSample pcmSample;
+MediaSample_ pcmSample;
 
 bool decoderEos = false;
 while (!decoderEos) {
@@ -262,7 +262,7 @@ while (!decoderEos) {
     if (error->facility() == primo::error::ErrorFacility::Codec &&
         error->code() == CodecError::EOS) {
         // Push null sample to signal EOS to WAV writer
-        MediaSample nullSample;
+        MediaSample_ nullSample;
         wavWriter.push(0, nullSample);
         decoderEos = true;
     }
@@ -277,12 +277,12 @@ wavWriter.close();
 ### Core Classes
 
 - **Library**: Initialize/shutdown AVBlocks, manage licensing
-- **Transcoder**: Main transcoding engine
-- **MediaSocket**: Input/output endpoint (file, stream, or elementary)
-- **MediaPin**: Elementary stream within a socket
-- **MediaInfo**: Analyze media files
-- **MediaSample**: Container for media data
-- **MediaBuffer**: Raw media data buffer
+- **Transcoder_**: Main transcoding engine
+- **MediaSocket_**: Input/output endpoint (file, stream, or elementary)
+- **MediaPin_**: Elementary stream within a socket
+- **MediaInfo_**: Analyze media files
+- **MediaSample_**: Container for media data
+- **MediaBuffer_**: Raw media data buffer
 
 ### Stream Configuration
 
@@ -296,7 +296,7 @@ wavWriter.close();
 Configure encoding/decoding behavior:
 
 ```cpp
-MediaPin pin = MediaPin()
+MediaPin_ pin = MediaPin_()
     .addParam(IntParam(Param::Video::Bitrate, 5000000))
     .addParam(IntParam(Param::Encoder::Video::H264::Profile, 
                       H264Profile::High))
@@ -306,15 +306,15 @@ MediaPin pin = MediaPin()
 ## Platform-Specific Notes
 
 ### Windows
-- Use `MediaSocketW` and `TranscoderW` classes for wide-character (Unicode) file paths
+- Use `MediaSocketW_` and `TranscoderW_` classes for wide-character (Unicode) file paths
 - Link against `AVBlocks64.lib` 
 
 ### macOS
-- Use standard `MediaSocket` and `Transcoder` classes
+- Use standard `MediaSocket_` and `Transcoder_` classes
 - Link against `libAVBlocks.dylib`
 
 ### Linux  
-- Use standard `MediaSocket` and `Transcoder` classes
+- Use standard `MediaSocket_` and `Transcoder_` classes
 - Link against `libAVBlocks64.so`
 
 # Development
